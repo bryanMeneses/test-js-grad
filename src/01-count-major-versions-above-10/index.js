@@ -31,6 +31,7 @@ The results should have this structure:
 
 module.exports = async function countMajorVersionsAbove10() {
   const axios = require('axios');
+
   try {
     const res = await axios.post(
       'http://ambush-api.inyourarea.co.uk/ambush/intercept',

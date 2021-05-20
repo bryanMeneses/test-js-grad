@@ -41,13 +41,15 @@ module.exports = async function oldestPackageName() {
       },
     );
 
+    // Sort from oldest to most recent
     const sortedByDate = res.data.content.sort(
       (a, b) => new Date(a.package.date) - new Date(b.package.date),
     );
 
-    return sortedByDate[0].package.name;
+    // Get the first one
+    const name = sortedByDate[0].package.name;
 
-    // return name
+    return name;
   } catch (err) {
     console.log(err.message);
   }

@@ -53,11 +53,10 @@ module.exports = async function organiseMaintainers() {
     );
 
     // Get all names
-
     let names = [];
 
-    res.data.content.forEach(t => {
-      t.package.maintainers.forEach(({ username }) => {
+    res.data.content.forEach(cur => {
+      cur.package.maintainers.forEach(({ username }) => {
         // If it is not in the array, add the name
         if (!names.includes(username)) {
           names.push(username);
@@ -71,7 +70,7 @@ module.exports = async function organiseMaintainers() {
     // Find all packages each person maintains
     // return [{}, {}, {}, ...]
 
-    const mappedPackagesToUsers = names.map(cur => {
+    const maintainers = names.map(cur => {
       let packageNames = [];
 
       res.data.content.forEach(j => {
@@ -85,7 +84,7 @@ module.exports = async function organiseMaintainers() {
       return { username: cur, packageNames };
     });
 
-    return mappedPackagesToUsers;
+    return maintainers;
   } catch (err) {
     console.log(err.message);
   }
