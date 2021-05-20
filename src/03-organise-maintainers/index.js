@@ -42,26 +42,27 @@ The results should have this structure:
 const axios = require('axios');
 
 module.exports = async function organiseMaintainers() {
-
   try {
-
-    const res = await axios.post('http://ambush-api.inyourarea.co.uk/ambush/intercept', {
-      url: "https://api.npms.io/v2/search/suggestions?q=react",
-      method: "GET",
-      return_payload: true
-    });
+    const res = await axios.post(
+      'http://ambush-api.inyourarea.co.uk/ambush/intercept',
+      {
+        url: 'https://api.npms.io/v2/search/suggestions?q=react',
+        method: 'GET',
+        return_payload: true,
+      },
+    );
 
     // Get all names
 
     let names = [];
 
     res.data.content.forEach(t => {
-      t.package.maintainers.forEach(({username}) => {
+      t.package.maintainers.forEach(({ username }) => {
         // If it is not in the array, add the name
         if (!names.includes(username)) {
           names.push(username);
         }
-      })
+      });
     });
 
     // alphebetize
@@ -71,7 +72,6 @@ module.exports = async function organiseMaintainers() {
     // return [{}, {}, {}, ...]
 
     const mappedPackagesToUsers = names.map(cur => {
-
       let packageNames = [];
 
       res.data.content.forEach(j => {
@@ -82,14 +82,11 @@ module.exports = async function organiseMaintainers() {
 
       packageNames = packageNames.sort((a, b) => a.localeCompare(b));
 
-      return {username: cur, packageNames};
+      return { username: cur, packageNames };
     });
 
     return mappedPackagesToUsers;
-
-
   } catch (err) {
     console.log(err.message);
   }
-
 };

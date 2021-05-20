@@ -28,24 +28,25 @@ The results should have this structure:
  *  the number of packages that have a MAJOR semver version 
  *  greater than 10.x.x
  */
- 
- module.exports = async function countMajorVersionsAbove10() {
-   
+
+module.exports = async function countMajorVersionsAbove10() {
   const axios = require('axios');
   try {
+    const res = await axios.post(
+      'http://ambush-api.inyourarea.co.uk/ambush/intercept',
+      {
+        url: 'https://api.npms.io/v2/search/suggestions?q=react',
+        method: 'GET',
+        return_payload: true,
+      },
+    );
 
-    const res = await axios.post('http://ambush-api.inyourarea.co.uk/ambush/intercept', {
-      url: "https://api.npms.io/v2/search/suggestions?q=react",
-      method: "GET",
-      return_payload: true
-    });
-
-    const filtered = res.data.content.filter(cur => parseInt(cur.package.version) >= 10);
+    const filtered = res.data.content.filter(
+      cur => parseInt(cur.package.version) >= 10,
+    );
     const count = filtered.length;
     return count;
-
   } catch (err) {
     console.log(err.message);
   }
-
 };
