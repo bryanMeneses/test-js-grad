@@ -39,8 +39,57 @@ The results should have this structure:
  * be in alphabetical order.
  */
 
-module.exports = async function organiseMaintainers() {
-  // TODO
+const axios = require('axios');
 
-  return maintainers
+module.exports = async function organiseMaintainers() {
+
+  try {
+
+    const res = await axios.post('http://ambush-api.inyourarea.co.uk/ambush/intercept', {
+      url: "https://api.npms.io/v2/search/suggestions?q=react",
+      method: "GET",
+      return_payload: true
+    });
+
+    // Get all names
+
+    let names = [];
+
+    res.data.content.forEach(t => {
+      t.package.maintainers.forEach(({username}) => {
+        // If it is not in the array, add the name
+        if (!names.includes(username)) {
+          names.push(username);
+        }
+      })
+    });
+
+    // alphebetize
+    names = names.sort((a, b) => a.localeCompare(b));
+
+    // Find all packages each person maintains
+    // return [{}, {}, {}, ...]
+
+    const mappedPackagesToUsers = names.map(cur => {
+
+      let packageNames = [];
+
+      res.data.content.forEach(j => {
+        if (j.package.maintainers.filter(z => z.username === cur).length > 0) {
+          packageNames.push(j.package.name);
+        }
+      });
+
+      packageNames = packageNames.sort((a, b) => a.localeCompare(b));
+
+      return {username: cur, packageNames};
+    });
+
+    return mappedPackagesToUsers;
+
+
+  } catch (err) {
+    console.log(err.message);
+  }
+
 };
